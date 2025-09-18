@@ -1,12 +1,21 @@
-FROM node:18
+# Base image
+FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of the app
 COPY . .
 
-RUN npm install --legacy-peer-deps
+# Build the admin panel
 RUN npm run build
 
+# Expose port
 EXPOSE 1337
 
-CMD ["npm", "run", "develop"]
+# Start Strapi in production mode
+CMD ["npm", "start"]
