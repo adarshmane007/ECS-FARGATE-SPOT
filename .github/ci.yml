@@ -1,0 +1,44 @@
+name: Build and Push Strapi Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ap-south-1
+
+    outputs:
+      IMAGE_TAG: ${{ steps.save-tag.outputs.IMAGE_TAG }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG=strapi-v${{ github.run_number }}
+          docker build -t $IMAGE_TAG .
+
+      - name: Tag and push to ECR
+        run: |
+          IMAGE_TAG=strapi-v${{ github.run_number }}
+          ECR_URI=145065858967.dkr.ecr.ap-south-1.amazonaws.com/adarshm/strapi:$IMAGE_TAG
+          docker tag $IMAGE_TAG $ECR_URI
+          docker push $ECR_URI
+
+      - name: Save image tag
+        id: save-tag
+        run: echo "IMAGE_TAG=strapi-v${{ github.run_number }}" >> $GITHUB_OUTPUT
