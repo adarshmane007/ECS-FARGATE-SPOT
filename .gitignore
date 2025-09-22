@@ -128,4 +128,15 @@ exports
 dist
 build
 .strapi-updater.json
+<<<<<<< HEAD
 .strapi-cloud.json
+
+# content from adarsh_mane
+
+# content from your commit
+
+
+.strapi-cloud.json
+
+
+>>>>>>> 60ed28f (Strapi EC2 deployment files and Terraform setup)
