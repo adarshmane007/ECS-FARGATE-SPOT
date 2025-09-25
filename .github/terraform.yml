@@ -2,6 +2,10 @@ name: Deploy Strapi via Terraform
 
 on:
   workflow_dispatch:
+  #on:
+  #push:
+    #branches:
+      #- adarsh_mane
 
 jobs:
   terraform-deploy:

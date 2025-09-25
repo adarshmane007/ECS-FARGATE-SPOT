@@ -25,3 +25,5 @@ docker run -d -p 1337:1337 \
 -e TRANSFER_TOKEN_SALT=8QGwDzJ2Pj+ZZD+v4Dpmcw== \
 -e ADMIN_JWT_SECRET=ak3wXp25yIi4BdVtROx/AQ== \
 145065858967.dkr.ecr.ap-south-1.amazonaws.com/adarshm/strapi:${image_tag}
+
+
