@@ -37,7 +37,7 @@ jobs:
 
     - name: Update terraform.tfvars with new image tag
       run: |
-        echo 'ecr_image_url = "${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}"' > terraform.tfvars
+        echo 'ecr_image_url = "${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}"' > terraform-ecs-strapi-5/terraform.tfvars
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -46,9 +46,12 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
+      working-directory: terraform-ecs-strapi-5
 
     - name: Terraform Plan
       run: terraform plan
+      working-directory: terraform-ecs-strapi-5
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
+      working-directory: terraform-ecs-strapi-5
