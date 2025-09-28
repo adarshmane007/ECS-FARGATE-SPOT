@@ -2,38 +2,42 @@ provider "aws" {
   region = var.region
 }
 
-# Use default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
-# Create two public subnets in different AZs
 resource "aws_subnet" "adarsh_subnet_7a" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "172.31.1.0/24"
+  cidr_block              = "172.31.32.0/20"
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "adarsh-subnet-7a"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_subnet" "adarsh_subnet_7b" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "172.31.2.0/24"
+  cidr_block              = "172.31.48.0/20"
   availability_zone       = "ap-south-1b"
   map_public_ip_on_launch = true
   tags = {
     Name = "adarsh-subnet-7b"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
-# ECS Cluster
 resource "aws_ecs_cluster" "adarsh_cluster_7" {
   name = "adarsh-strapi-cluster-7"
 }
 
-# Security Group
 resource "aws_security_group" "adarsh_sg_7" {
   name        = "adarsh-strapi-sg-7"
   description = "Allow all traffic for debugging"
@@ -52,15 +56,23 @@ resource "aws_security_group" "adarsh_sg_7" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [name]
+  }
 }
 
-# Load Balancer
 resource "aws_lb" "adarsh_alb_7" {
   name               = "adarsh-strapi-alb-7"
   internal           = false
   load_balancer_type = "application"
   subnets            = [aws_subnet.adarsh_subnet_7a.id, aws_subnet.adarsh_subnet_7b.id]
   security_groups    = [aws_security_group.adarsh_sg_7.id]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_lb_target_group" "adarsh_tg_7" {
@@ -83,6 +95,7 @@ resource "aws_lb_target_group" "adarsh_tg_7" {
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [name]
   }
 }
 
@@ -95,9 +108,12 @@ resource "aws_lb_listener" "adarsh_listener_7" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.adarsh_tg_7.arn
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
-# ECS Task Definition
 resource "aws_ecs_task_definition" "adarsh_task_7" {
   family                   = "adarsh-strapi-task-7"
   requires_compatibilities = ["FARGATE"]
@@ -137,7 +153,6 @@ resource "aws_ecs_task_definition" "adarsh_task_7" {
   ])
 }
 
-# ECS Service
 resource "aws_ecs_service" "adarsh_service_7" {
   name            = "adarsh-strapi-service-7"
   cluster         = aws_ecs_cluster.adarsh_cluster_7.id
