@@ -66,7 +66,7 @@ resource "aws_lb_target_group" "adarsh_tg_7" {
   vpc_id      = data.aws_vpc.default.id
 
   health_check {
-    path                = "/admin"
+    path                = "/"
     port                = "traffic-port"
     protocol            = "HTTP"
     interval            = 30
@@ -125,10 +125,6 @@ resource "aws_ecs_task_definition" "adarsh_task_7" {
         { name = "HOST", value = "0.0.0.0" },
         { name = "PORT", value = tostring(var.container_port) }
       ]
-      logConfiguration = {
-        logDriver = "none"
-       
-      }
     }
   ])
 }
