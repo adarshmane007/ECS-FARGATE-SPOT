@@ -10,7 +10,7 @@ data "aws_vpc" "default" {
 # Create two public subnets in different AZs
 resource "aws_subnet" "adarsh_subnet_7a" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = "172.31.1.0/24"
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
   tags = {
@@ -20,7 +20,7 @@ resource "aws_subnet" "adarsh_subnet_7a" {
 
 resource "aws_subnet" "adarsh_subnet_7b" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "10.0.2.0/24"
+  cidr_block              = "172.31.2.0/24"
   availability_zone       = "ap-south-1b"
   map_public_ip_on_launch = true
   tags = {
