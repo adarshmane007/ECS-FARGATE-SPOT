@@ -6,31 +6,35 @@ data "aws_vpc" "default" {
   default = true
 }
 
+# Imported Subnet A
 resource "aws_subnet" "adarsh_subnet_7a" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "172.31.32.0/20"
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
+
   tags = {
     Name = "adarsh-subnet-7a"
   }
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [cidr_block, tags]
   }
 }
 
+# Imported Subnet B
 resource "aws_subnet" "adarsh_subnet_7b" {
   vpc_id                  = data.aws_vpc.default.id
-  cidr_block              = "172.31.48.0/20"
   availability_zone       = "ap-south-1b"
   map_public_ip_on_launch = true
+
   tags = {
     Name = "adarsh-subnet-7b"
   }
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [cidr_block, tags]
   }
 }
 
@@ -38,6 +42,7 @@ resource "aws_ecs_cluster" "adarsh_cluster_7" {
   name = "adarsh-strapi-cluster-7"
 }
 
+# Imported Security Group
 resource "aws_security_group" "adarsh_sg_7" {
   name        = "adarsh-strapi-sg-7"
   description = "Allow all traffic for debugging"
@@ -59,7 +64,7 @@ resource "aws_security_group" "adarsh_sg_7" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [name]
+    ignore_changes  = [name, tags]
   }
 }
 
@@ -72,9 +77,11 @@ resource "aws_lb" "adarsh_alb_7" {
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [name, tags]
   }
 }
 
+# Imported Target Group
 resource "aws_lb_target_group" "adarsh_tg_7" {
   name        = "adarsh-strapi-tg-7"
   port        = var.container_port
@@ -95,7 +102,7 @@ resource "aws_lb_target_group" "adarsh_tg_7" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [name]
+    ignore_changes  = [name, tags]
   }
 }
 
@@ -111,6 +118,7 @@ resource "aws_lb_listener" "adarsh_listener_7" {
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [tags]
   }
 }
 
