@@ -6,36 +6,14 @@ data "aws_vpc" "default" {
   default = true
 }
 
-# Imported Subnet A
-resource "aws_subnet" "adarsh_subnet_7a" {
-  vpc_id                  = data.aws_vpc.default.id
-  availability_zone       = "ap-south-1a"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "adarsh-subnet-7a"
-  }
-
-  lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [tags]
-  }
+# Referenced Subnet A (imported)
+data "aws_subnet" "adarsh_subnet_7a" {
+  id = "subnet-03e1b3fe2ad999849"
 }
 
-# Imported Subnet B
-resource "aws_subnet" "adarsh_subnet_7b" {
-  vpc_id                  = data.aws_vpc.default.id
-  availability_zone       = "ap-south-1b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "adarsh-subnet-7b"
-  }
-
-  lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [tags]
-  }
+# Referenced Subnet B (imported)
+data "aws_subnet" "adarsh_subnet_7b" {
+  id = "subnet-05e9035d969355719"
 }
 
 resource "aws_ecs_cluster" "adarsh_cluster_7" {
@@ -72,7 +50,7 @@ resource "aws_lb" "adarsh_alb_7" {
   name               = "adarsh-strapi-alb-7"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.adarsh_subnet_7a.id, aws_subnet.adarsh_subnet_7b.id]
+  subnets            = [data.aws_subnet.adarsh_subnet_7a.id, data.aws_subnet.adarsh_subnet_7b.id]
   security_groups    = [aws_security_group.adarsh_sg_7.id]
 
   lifecycle {
@@ -169,7 +147,7 @@ resource "aws_ecs_service" "adarsh_service_7" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = [aws_subnet.adarsh_subnet_7a.id, aws_subnet.adarsh_subnet_7b.id]
+    subnets          = [data.aws_subnet.adarsh_subnet_7a.id, data.aws_subnet.adarsh_subnet_7b.id]
     security_groups  = [aws_security_group.adarsh_sg_7.id]
     assign_public_ip = true
   }
