@@ -2,7 +2,7 @@ name: Deploy Strapi to ECS (Task 7)
 
 on:
   push:
-    branches: "**"
+    branches: adarsh_mane
 
 jobs:
   deploy:
