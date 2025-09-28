@@ -126,12 +126,8 @@ resource "aws_ecs_task_definition" "adarsh_task_7" {
         { name = "PORT", value = tostring(var.container_port) }
       ]
       logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "/ecs/adarsh-strapi-7"
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "ecs"
-        }
+        logDriver = "none"
+       
       }
     }
   ])
