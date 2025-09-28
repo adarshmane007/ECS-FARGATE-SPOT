@@ -20,7 +20,6 @@ resource "aws_ecs_cluster" "adarsh_cluster_7" {
   name = "adarsh-strapi-cluster-7"
 }
 
-# Imported Security Group
 resource "aws_security_group" "adarsh_sg_7" {
   name        = "adarsh-strapi-sg-7"
   description = "Allow all traffic for debugging"
@@ -59,7 +58,6 @@ resource "aws_lb" "adarsh_alb_7" {
   }
 }
 
-# Imported Target Group
 resource "aws_lb_target_group" "adarsh_tg_7" {
   name        = "adarsh-strapi-tg-7"
   port        = var.container_port
