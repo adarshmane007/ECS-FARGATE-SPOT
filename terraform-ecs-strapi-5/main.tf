@@ -18,7 +18,7 @@ resource "aws_subnet" "adarsh_subnet_7a" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [cidr_block, tags]
+    ignore_changes  = [tags]
   }
 }
 
@@ -34,7 +34,7 @@ resource "aws_subnet" "adarsh_subnet_7b" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [cidr_block, tags]
+    ignore_changes  = [tags]
   }
 }
 
