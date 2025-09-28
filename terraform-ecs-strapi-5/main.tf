@@ -1,21 +1,15 @@
 provider "aws" {
-        
   region = var.region
 }
 
-# Create a new VPC
-resource "aws_vpc" "adarsh_vpc_7" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "adarsh-vpc-7"
-  }
+# Use default VPC
+data "aws_vpc" "default" {
+  default = true
 }
 
 # Create two public subnets in different AZs
 resource "aws_subnet" "adarsh_subnet_7a" {
-  vpc_id                  = aws_vpc.adarsh_vpc_7.id
+  vpc_id                  = data.aws_vpc.default.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
@@ -25,7 +19,7 @@ resource "aws_subnet" "adarsh_subnet_7a" {
 }
 
 resource "aws_subnet" "adarsh_subnet_7b" {
-  vpc_id                  = aws_vpc.adarsh_vpc_7.id
+  vpc_id                  = data.aws_vpc.default.id
   cidr_block              = "10.0.2.0/24"
   availability_zone       = "ap-south-1b"
   map_public_ip_on_launch = true
@@ -43,7 +37,7 @@ resource "aws_ecs_cluster" "adarsh_cluster_7" {
 resource "aws_security_group" "adarsh_sg_7" {
   name        = "adarsh-strapi-sg-7"
   description = "Allow all traffic for debugging"
-  vpc_id      = aws_vpc.adarsh_vpc_7.id
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     from_port   = 0
@@ -74,7 +68,7 @@ resource "aws_lb_target_group" "adarsh_tg_7" {
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = aws_vpc.adarsh_vpc_7.id
+  vpc_id      = data.aws_vpc.default.id
 
   health_check {
     path                = "/admin"
