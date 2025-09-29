@@ -16,17 +16,17 @@ data "aws_subnet" "adarsh_subnet_7b" {
   id = "subnet-05e9035d969355719"
 }
 
-# ✅ New ECS Cluster for Task #8
+# Reuse security group
+data "aws_security_group" "adarsh_sg_7" {
+  id = "sg-05107eda1fad1280d"
+}
+
+# ✅ ECS Cluster
 resource "aws_ecs_cluster" "adarsh_cluster_8" {
   name = "adarsh-strapi-cluster-8"
 }
 
-# Reuse security group
-data "aws_security_group" "adarsh_sg_7" {
-  id = "sg-05107eda1fad1280d" # Replace with actual SG ID
-}
-
-# ✅ New ALB
+# ✅ ALB
 resource "aws_lb" "adarsh_alb_8" {
   name               = "adarsh-strapi-alb-8"
   internal           = false
@@ -35,7 +35,7 @@ resource "aws_lb" "adarsh_alb_8" {
   security_groups    = [data.aws_security_group.adarsh_sg_7.id]
 }
 
-# ✅ New Target Group
+# ✅ Target Group
 resource "aws_lb_target_group" "adarsh_tg_8" {
   name        = "adarsh-strapi-tg-8"
   port        = var.container_port
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "adarsh_tg_8" {
   }
 }
 
-# ✅ New Listener
+# ✅ Listener
 resource "aws_lb_listener" "adarsh_listener_8" {
   load_balancer_arn = aws_lb.adarsh_alb_8.arn
   port              = 80
@@ -67,13 +67,13 @@ resource "aws_lb_listener" "adarsh_listener_8" {
   }
 }
 
-# ✅ New CloudWatch Log Group
+# ✅ CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "strapi_logs_8" {
   name              = "/ecs/strapi-8"
   retention_in_days = 7
 }
 
-# ✅ New ECS Task Definition with logging
+# ✅ ECS Task Definition
 resource "aws_ecs_task_definition" "adarsh_task_8" {
   family                   = "adarsh-strapi-task-8"
   requires_compatibilities = ["FARGATE"]
@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "adarsh_task_8" {
   ])
 }
 
-# ✅ New ECS Serviceeee
+# ✅ ECS Service
 resource "aws_ecs_service" "adarsh_service_8" {
   name            = "adarsh-strapi-service-8"
   cluster         = aws_ecs_cluster.adarsh_cluster_8.id
@@ -136,4 +136,64 @@ resource "aws_ecs_service" "adarsh_service_8" {
   health_check_grace_period_seconds = 120
 
   depends_on = [aws_lb_listener.adarsh_listener_8]
+}
+
+# ✅ CloudWatch Alarm: High CPU
+resource "aws_cloudwatch_metric_alarm" "high_cpu_alarm_8" {
+  alarm_name          = "high-cpu-usage-task-8"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/ECS"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 80
+  alarm_description   = "Alarm when CPU usage exceeds 80%"
+  dimensions = {
+    ClusterName = aws_ecs_cluster.adarsh_cluster_8.name
+    ServiceName = aws_ecs_service.adarsh_service_8.name
+  }
+}
+
+# ✅ CloudWatch Alarm: High Memory
+resource "aws_cloudwatch_metric_alarm" "high_memory_alarm_8" {
+  alarm_name          = "high-memory-usage-task-8"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "MemoryUtilization"
+  namespace           = "AWS/ECS"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 75
+  alarm_description   = "Alarm when memory usage exceeds 75%"
+  dimensions = {
+    ClusterName = aws_ecs_cluster.adarsh_cluster_8.name
+    ServiceName = aws_ecs_service.adarsh_service_8.name
+  }
+}
+
+# ✅ Optional CloudWatch Dashboard
+resource "aws_cloudwatch_dashboard" "ecs_dashboard_8" {
+  dashboard_name = "ecs-strapi-task-8-dashboard"
+
+  dashboard_body = jsonencode({
+    widgets = [
+      {
+        type = "metric"
+        x    = 0
+        y    = 0
+        width  = 12
+        height = 6
+        properties = {
+          metrics = [
+            [ "AWS/ECS", "CPUUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_8.name, "ServiceName", aws_ecs_service.adarsh_service_8.name ],
+            [ ".", "MemoryUtilization", ".", ".", ".", "." ]
+          ]
+          period = 60
+          stat   = "Average"
+          title  = "ECS CPU & Memory Usage"
+        }
+      }
+    ]
+  })
 }
