@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "adarsh_task_8" {
   ])
 }
 
-# ✅ New ECS Service
+# ✅ New ECS Serviceeee
 resource "aws_ecs_service" "adarsh_service_8" {
   name            = "adarsh-strapi-service-8"
   cluster         = aws_ecs_cluster.adarsh_cluster_8.id
