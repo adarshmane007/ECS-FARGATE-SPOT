@@ -26,7 +26,7 @@ resource "aws_ecs_cluster" "adarsh_cluster_8" {
   name = "adarsh-strapi-cluster-8"
 }
 
-# New ALB for Spot
+# ALB
 resource "aws_lb" "adarsh_alb_spot_8" {
   name               = "adarsh-strapi-alb-spot-8"
   internal           = false
@@ -35,7 +35,7 @@ resource "aws_lb" "adarsh_alb_spot_8" {
   security_groups    = [data.aws_security_group.adarsh_sg_7.id]
 }
 
-# New Target Group for Spot
+# Target Group
 resource "aws_lb_target_group" "adarsh_tg_spot_8" {
   name        = "adarsh-strapi-tg-spot-8"
   port        = var.container_port
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "adarsh_tg_spot_8" {
   }
 }
 
-# Listener for Spot ALB
+# Listener
 resource "aws_lb_listener" "adarsh_listener_spot_8" {
   load_balancer_arn = aws_lb.adarsh_alb_spot_8.arn
   port              = 80
@@ -67,9 +67,9 @@ resource "aws_lb_listener" "adarsh_listener_spot_8" {
   }
 }
 
-# CloudWatch Log Group
+# ✅ Unique CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "strapi_logs_8" {
-  name              = "/ecs/strapi-8"
+  name              = "/ecs/strapi-spot-8"
   retention_in_days = 7
 }
 
