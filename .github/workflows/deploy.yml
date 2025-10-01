@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - adarsh_mane
+    paths:
+      - 'terraform-ecs-strapi-5/**'
 
 jobs:
   deploy:

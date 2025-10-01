@@ -1,11 +1,11 @@
-name: Deploy Strapi to ECS (Task 8)
+name: Deploy Strapi to ECS (Task 8 - Fargate Spot)
 
 on:
   push:
     branches:
       - adarsh_mane
     paths:
-      - 'terraform-ecs-strapi-6/**'
+      - 'terraform-ecs-strapi-7/**'
 
 jobs:
   deploy:
@@ -39,11 +39,11 @@ jobs:
 
     - name: Update terraform.tfvars with new image tag
       run: |
-        echo 'ecr_image_url = "${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}"' > terraform-ecs-strapi-6/terraform.tfvars
+        echo 'ecr_image_url = "${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}"' > terraform-ecs-strapi-7/terraform.tfvars
 
     - name: Clean Terraform cache
       run: rm -rf .terraform terraform.tfstate*
-      working-directory: terraform-ecs-strapi-6
+      working-directory: terraform-ecs-strapi-7
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -52,12 +52,12 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
-      working-directory: terraform-ecs-strapi-6
+      working-directory: terraform-ecs-strapi-7
 
     - name: Terraform Plan
       run: terraform plan
-      working-directory: terraform-ecs-strapi-6
+      working-directory: terraform-ecs-strapi-7
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-      working-directory: terraform-ecs-strapi-6
+      working-directory: terraform-ecs-strapi-7
