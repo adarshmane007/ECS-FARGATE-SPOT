@@ -170,19 +170,20 @@ resource "aws_cloudwatch_dashboard" "ecs_dashboard_99" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
-        x    = 0
-        y    = 0
-        width  = 12
-        height = 6
+        type = "metric",
+        x    = 0,
+        y    = 0,
+        width  = 12,
+        height = 6,
         properties = {
+          title  = "ECS CPU & Memory Usage",
+          region = var.region,
           metrics = [
             [ "AWS/ECS", "CPUUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_99.name, "ServiceName", aws_ecs_service.adarsh_service_spot_99.name ],
             [ "AWS/ECS", "MemoryUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_99.name, "ServiceName", aws_ecs_service.adarsh_service_spot_99.name ]
-          ]
+          ],
+          stat = "Average",
           period = 60
-          stat   = "Average"
-          title  = "ECS CPU & Memory Usage"
         }
       }
     ]
