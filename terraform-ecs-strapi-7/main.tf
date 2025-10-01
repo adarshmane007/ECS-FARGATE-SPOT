@@ -2,12 +2,10 @@ provider "aws" {
   region = var.region
 }
 
-# Reuse default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
-# Reuse imported subnets
 data "aws_subnet" "adarsh_subnet_7a" {
   id = "subnet-03e1b3fe2ad999849"
 }
@@ -16,28 +14,26 @@ data "aws_subnet" "adarsh_subnet_7b" {
   id = "subnet-05e9035d969355719"
 }
 
-# Reuse security group
 data "aws_security_group" "adarsh_sg_7" {
   id = "sg-05107eda1fad1280d"
 }
 
-# ECS Cluster
 resource "aws_ecs_cluster" "adarsh_cluster_8" {
   name = "adarsh-strapi-cluster-8"
 }
 
-# ALB
-resource "aws_lb" "adarsh_alb_spot_8" {
-  name               = "adarsh-strapi-alb-spot-8"
+# ✅ Renamed ALB
+resource "aws_lb" "adarsh_alb_spot_8b" {
+  name               = "adarsh-strapi-alb-spot-8b"
   internal           = false
   load_balancer_type = "application"
   subnets            = [data.aws_subnet.adarsh_subnet_7a.id, data.aws_subnet.adarsh_subnet_7b.id]
   security_groups    = [data.aws_security_group.adarsh_sg_7.id]
 }
 
-# Target Group
-resource "aws_lb_target_group" "adarsh_tg_spot_8" {
-  name        = "adarsh-strapi-tg-spot-8"
+# ✅ Renamed Target Group
+resource "aws_lb_target_group" "adarsh_tg_spot_8b" {
+  name        = "adarsh-strapi-tg-spot-8b"
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
@@ -55,25 +51,22 @@ resource "aws_lb_target_group" "adarsh_tg_spot_8" {
   }
 }
 
-# Listener
 resource "aws_lb_listener" "adarsh_listener_spot_8" {
-  load_balancer_arn = aws_lb.adarsh_alb_spot_8.arn
+  load_balancer_arn = aws_lb.adarsh_alb_spot_8b.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.adarsh_tg_spot_8.arn
+    target_group_arn = aws_lb_target_group.adarsh_tg_spot_8b.arn
   }
 }
 
-# ✅ Unique CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "strapi_logs_8" {
   name              = "/ecs/strapi-spot-8"
   retention_in_days = 7
 }
 
-# ECS Task Definition
 resource "aws_ecs_task_definition" "adarsh_task_8" {
   family                   = "adarsh-strapi-task-8"
   requires_compatibilities = ["FARGATE"]
@@ -113,7 +106,6 @@ resource "aws_ecs_task_definition" "adarsh_task_8" {
   ])
 }
 
-# ECS Service using FARGATE_SPOT
 resource "aws_ecs_service" "adarsh_service_spot_8" {
   name            = "adarsh-strapi-service-spot-8"
   cluster         = aws_ecs_cluster.adarsh_cluster_8.id
@@ -132,7 +124,7 @@ resource "aws_ecs_service" "adarsh_service_spot_8" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.adarsh_tg_spot_8.arn
+    target_group_arn = aws_lb_target_group.adarsh_tg_spot_8b.arn
     container_name   = "strapi"
     container_port   = var.container_port
   }
@@ -142,7 +134,6 @@ resource "aws_ecs_service" "adarsh_service_spot_8" {
   depends_on = [aws_lb_listener.adarsh_listener_spot_8]
 }
 
-# CloudWatch Alarm: High CPU
 resource "aws_cloudwatch_metric_alarm" "high_cpu_alarm_8" {
   alarm_name          = "high-cpu-usage-task-8"
   comparison_operator = "GreaterThanThreshold"
@@ -159,7 +150,6 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu_alarm_8" {
   }
 }
 
-# CloudWatch Alarm: High Memory
 resource "aws_cloudwatch_metric_alarm" "high_memory_alarm_8" {
   alarm_name          = "high-memory-usage-task-8"
   comparison_operator = "GreaterThanThreshold"
@@ -176,7 +166,6 @@ resource "aws_cloudwatch_metric_alarm" "high_memory_alarm_8" {
   }
 }
 
-# CloudWatch Dashboard
 resource "aws_cloudwatch_dashboard" "ecs_dashboard_8a" {
   dashboard_name = "ecs-strapi-task-8-dashboard"
 
