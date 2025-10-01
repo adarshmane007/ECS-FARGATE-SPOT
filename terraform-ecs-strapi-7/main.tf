@@ -155,7 +155,7 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu_alarm_8" {
   alarm_description   = "Alarm when CPU usage exceeds 80%"
   dimensions = {
     ClusterName = aws_ecs_cluster.adarsh_cluster_8.name
-    ServiceName = aws_ecs_service_spot_8.name
+    ServiceName = aws_ecs_service.adarsh_service_spot_8.name
   }
 }
 
@@ -172,7 +172,7 @@ resource "aws_cloudwatch_metric_alarm" "high_memory_alarm_8" {
   alarm_description   = "Alarm when memory usage exceeds 75%"
   dimensions = {
     ClusterName = aws_ecs_cluster.adarsh_cluster_8.name
-    ServiceName = aws_ecs_service_spot_8.name
+    ServiceName = aws_ecs_service.adarsh_service_spot_8.name
   }
 }
 
@@ -190,8 +190,8 @@ resource "aws_cloudwatch_dashboard" "ecs_dashboard_8a" {
         height = 6
         properties = {
           metrics = [
-            [ "AWS/ECS", "CPUUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_8.name, "ServiceName", aws_ecs_service_spot_8.name ],
-            [ ".", "MemoryUtilization", ".", ".", ".", "." ]
+            [ "AWS/ECS", "CPUUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_8.name, "ServiceName", aws_ecs_service.adarsh_service_spot_8.name ],
+            [ "AWS/ECS", "MemoryUtilization", "ClusterName", aws_ecs_cluster.adarsh_cluster_8.name, "ServiceName", aws_ecs_service.adarsh_service_spot_8.name ]
           ]
           period = 60
           stat   = "Average"
