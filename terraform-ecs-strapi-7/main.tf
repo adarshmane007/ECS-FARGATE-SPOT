@@ -177,7 +177,7 @@ resource "aws_cloudwatch_metric_alarm" "high_memory_alarm_8" {
 }
 
 # CloudWatch Dashboard
-resource "aws_cloudwatch_dashboard" "ecs_dashboard_8" {
+resource "aws_cloudwatch_dashboard" "ecs_dashboard_8a" {
   dashboard_name = "ecs-strapi-task-8-dashboard"
 
   dashboard_body = jsonencode({
